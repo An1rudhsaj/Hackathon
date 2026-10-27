@@ -1,0 +1,68 @@
+{
+  "properties": {
+    "eventId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Eventid"
+    },
+    "matchId": {
+      "title": "Matchid",
+      "type": "string"
+    },
+    "mediaTime": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Mediatime"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "seq": {
+      "minimum": 1,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "source": {
+      "enum": [
+        "gemini",
+        "template"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "ts": {
+      "title": "Ts",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "matchId",
+    "seq",
+    "ts",
+    "text",
+    "source"
+  ],
+  "title": "CommentaryMessage",
+  "type": "object"
+}

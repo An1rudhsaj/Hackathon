@@ -1,0 +1,243 @@
+{
+  "$defs": {
+    "Clock": {
+      "properties": {
+        "period": {
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Period",
+          "type": "integer"
+        },
+        "seconds": {
+          "title": "Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "period",
+        "seconds"
+      ],
+      "title": "Clock",
+      "type": "object"
+    },
+    "Xy": {
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "Xy",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "ballSpeed": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ballspeed"
+    },
+    "clock": {
+      "$ref": "#/$defs/Clock"
+    },
+    "conf": {
+      "title": "Conf",
+      "type": "number"
+    },
+    "distance": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Distance"
+    },
+    "end": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Xy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "eventId": {
+      "title": "Eventid",
+      "type": "string"
+    },
+    "intoBox": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Intobox"
+    },
+    "matchId": {
+      "title": "Matchid",
+      "type": "string"
+    },
+    "mediaTime": {
+      "minimum": 0,
+      "title": "Mediatime",
+      "type": "number"
+    },
+    "outcome": {
+      "anyOf": [
+        {
+          "enum": [
+            "goal",
+            "saved",
+            "off_target",
+            "blocked",
+            "complete",
+            "incomplete"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outcome"
+    },
+    "playerId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Playerid"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "seq": {
+      "minimum": 1,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "start": {
+      "$ref": "#/$defs/Xy"
+    },
+    "status": {
+      "enum": [
+        "provisional",
+        "confirmed",
+        "retracted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "targetPlayerId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Targetplayerid"
+    },
+    "team": {
+      "enum": [
+        "home",
+        "away"
+      ],
+      "title": "Team",
+      "type": "string"
+    },
+    "ts": {
+      "title": "Ts",
+      "type": "integer"
+    },
+    "type": {
+      "enum": [
+        "pass",
+        "shot",
+        "save",
+        "goal",
+        "tackle",
+        "foul",
+        "card",
+        "offside",
+        "corner",
+        "throw_in",
+        "goal_kick",
+        "substitution"
+      ],
+      "title": "Type",
+      "type": "string"
+    },
+    "xg": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Xg"
+    }
+  },
+  "required": [
+    "matchId",
+    "seq",
+    "ts",
+    "eventId",
+    "revision",
+    "status",
+    "type",
+    "clock",
+    "mediaTime",
+    "team",
+    "start",
+    "conf"
+  ],
+  "title": "EventMessage",
+  "type": "object"
+}

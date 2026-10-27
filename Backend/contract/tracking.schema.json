@@ -1,0 +1,217 @@
+{
+  "$defs": {
+    "Clock": {
+      "properties": {
+        "period": {
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Period",
+          "type": "integer"
+        },
+        "seconds": {
+          "title": "Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "period",
+        "seconds"
+      ],
+      "title": "Clock",
+      "type": "object"
+    },
+    "TrackBall": {
+      "properties": {
+        "airborne": {
+          "title": "Airborne",
+          "type": "boolean"
+        },
+        "conf": {
+          "title": "Conf",
+          "type": "number"
+        },
+        "speed": {
+          "title": "Speed",
+          "type": "number"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z",
+        "speed",
+        "airborne",
+        "conf"
+      ],
+      "title": "TrackBall",
+      "type": "object"
+    },
+    "TrackPlayer": {
+      "properties": {
+        "conf": {
+          "title": "Conf",
+          "type": "number"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "num": {
+          "title": "Num",
+          "type": "integer"
+        },
+        "role": {
+          "enum": [
+            "GK",
+            "DF",
+            "MF",
+            "FW"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "speed": {
+          "title": "Speed",
+          "type": "number"
+        },
+        "team": {
+          "enum": [
+            "home",
+            "away"
+          ],
+          "title": "Team",
+          "type": "string"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "team",
+        "num",
+        "role",
+        "x",
+        "y",
+        "speed",
+        "conf"
+      ],
+      "title": "TrackPlayer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "ball": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TrackBall"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "clock": {
+      "$ref": "#/$defs/Clock"
+    },
+    "frame": {
+      "title": "Frame",
+      "type": "integer"
+    },
+    "holderId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Holderid"
+    },
+    "matchId": {
+      "title": "Matchid",
+      "type": "string"
+    },
+    "mediaSegment": {
+      "default": 0,
+      "title": "Mediasegment",
+      "type": "integer"
+    },
+    "mediaTime": {
+      "minimum": 0,
+      "title": "Mediatime",
+      "type": "number"
+    },
+    "players": {
+      "items": {
+        "$ref": "#/$defs/TrackPlayer"
+      },
+      "title": "Players",
+      "type": "array"
+    },
+    "possession": {
+      "anyOf": [
+        {
+          "enum": [
+            "home",
+            "away"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Possession"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "seq": {
+      "minimum": 1,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "ts": {
+      "title": "Ts",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "matchId",
+    "seq",
+    "ts",
+    "frame",
+    "mediaTime",
+    "clock",
+    "players"
+  ],
+  "title": "TrackingMessage",
+  "type": "object"
+}

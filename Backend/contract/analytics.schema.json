@@ -1,0 +1,214 @@
+{
+  "$defs": {
+    "FastestShot": {
+      "properties": {
+        "playerId": {
+          "title": "Playerid",
+          "type": "string"
+        },
+        "speed": {
+          "title": "Speed",
+          "type": "number"
+        }
+      },
+      "required": [
+        "playerId",
+        "speed"
+      ],
+      "title": "FastestShot",
+      "type": "object"
+    },
+    "Pair": {
+      "properties": {
+        "away": {
+          "title": "Away",
+          "type": "number"
+        },
+        "home": {
+          "title": "Home",
+          "type": "number"
+        }
+      },
+      "required": [
+        "home",
+        "away"
+      ],
+      "title": "Pair",
+      "type": "object"
+    },
+    "PlayerMetric": {
+      "properties": {
+        "distanceKm": {
+          "title": "Distancekm",
+          "type": "number"
+        },
+        "fatigue": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Fatigue",
+          "type": "number"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "sprints": {
+          "title": "Sprints",
+          "type": "integer"
+        },
+        "topSpeed": {
+          "title": "Topspeed",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "distanceKm",
+        "topSpeed",
+        "sprints",
+        "fatigue"
+      ],
+      "title": "PlayerMetric",
+      "type": "object"
+    },
+    "WinProb": {
+      "properties": {
+        "away": {
+          "title": "Away",
+          "type": "number"
+        },
+        "draw": {
+          "title": "Draw",
+          "type": "number"
+        },
+        "home": {
+          "title": "Home",
+          "type": "number"
+        }
+      },
+      "required": [
+        "home",
+        "draw",
+        "away"
+      ],
+      "title": "WinProb",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "eventsThroughSeq": {
+      "default": 0,
+      "title": "Eventsthroughseq",
+      "type": "integer"
+    },
+    "fastestShot": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FastestShot"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "formation": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Formation",
+      "type": "object"
+    },
+    "matchId": {
+      "title": "Matchid",
+      "type": "string"
+    },
+    "mediaTime": {
+      "minimum": 0,
+      "title": "Mediatime",
+      "type": "number"
+    },
+    "passes": {
+      "$ref": "#/$defs/Pair"
+    },
+    "pitchControl": {
+      "$ref": "#/$defs/Pair"
+    },
+    "pitchControlGrid": {
+      "anyOf": [
+        {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pitchcontrolgrid"
+    },
+    "playerMetrics": {
+      "items": {
+        "$ref": "#/$defs/PlayerMetric"
+      },
+      "title": "Playermetrics",
+      "type": "array"
+    },
+    "possessionPct": {
+      "$ref": "#/$defs/Pair"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "score": {
+      "$ref": "#/$defs/Pair"
+    },
+    "seq": {
+      "minimum": 1,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "shots": {
+      "$ref": "#/$defs/Pair"
+    },
+    "ts": {
+      "title": "Ts",
+      "type": "integer"
+    },
+    "winProbability": {
+      "$ref": "#/$defs/WinProb"
+    },
+    "xg": {
+      "$ref": "#/$defs/Pair"
+    },
+    "xt": {
+      "$ref": "#/$defs/Pair"
+    }
+  },
+  "required": [
+    "matchId",
+    "seq",
+    "ts",
+    "mediaTime",
+    "score",
+    "possessionPct",
+    "xg",
+    "xt",
+    "shots",
+    "passes",
+    "winProbability",
+    "formation",
+    "pitchControl",
+    "playerMetrics"
+  ],
+  "title": "AnalyticsMessage",
+  "type": "object"
+}

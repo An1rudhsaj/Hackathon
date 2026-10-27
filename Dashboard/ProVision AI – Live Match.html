@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ProVision AI – AI Football Match Analytics</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="provision.css">
+</head>
+<body>
+<div id="appShell">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav" id="top">
+    <div class="brand">
+      <div class="brand-badge" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+      </div>
+      <div>
+        <span class="brand-title">AI Football</span>
+        <span class="brand-sub">ProVision Analytics</span>
+      </div>
+    </div>
+
+    <!-- Center Segmented Pill Navigation Group -->
+    <nav class="nav-center-group" aria-label="Main Navigation">
+      <button class="nav-pill on" id="navRoom" type="button"><span class="pill-icon">🏟</span> Room</button>
+      <button class="nav-pill" id="navSettings" type="button" title="Tactical &amp; Camera Settings"><span class="pill-icon">⚙</span> Settings</button>
+      <button class="nav-pill" id="navAnalytics" type="button" title="Match Analytics Breakdown"><span class="pill-icon">📊</span> Analytics</button>
+      <button class="nav-pill" id="navStandings" type="button" title="League Standings"><span class="pill-icon">🏆</span> Standings</button>
+      <button class="nav-pill" id="navMomentum" type="button" title="Match Momentum &amp; EPV"><span class="pill-icon">📈</span> Momentum</button>
+      <button class="nav-pill" id="navFixtures" type="button" title="A-League Fixtures"><span class="pill-icon">📅</span> Fixtures</button>
+      <div class="live-pill" id="navLiveBadge"><span class="live-dot"></span> Live Match</div>
+    </nav>
+
+    <!-- Right Controls, Search & User Profile -->
+    <div class="nav-right-group">
+      <div class="sr">
+        <span>🔍</span>
+        <input id="q" type="search" placeholder="Search passes, players..." aria-label="Search events">
+        <button id="mic" aria-label="Voice search" type="button">🎤</button>
+      </div>
+      <div id="srcCtl" class="source-pill">
+        <button id="srcBtn" aria-haspopup="dialog" type="button">Source</button>
+        <span id="connDot" class="dot" aria-hidden="true"></span>
+        <span id="connTxt">offline</span>
+      </div>
+      <div class="user-profile">
+        <div class="user-avatar" aria-hidden="true">MC</div>
+        <div class="user-info">
+          <b>Matias Corea</b>
+          <small>Tactical Analyst</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2-Column Panoramic Layout (Extended Dual Stage on Left + Sidebar on Right) -->
+  <main id="mainContent" class="dashboard-grid">
+    <!-- LEFT / MAIN COLUMN: Extended Dual Stage (OG Video + 3D Twin), Timeline & Commentary -->
+    <section id="colCenter" class="column">
+      <div class="glass-card stage-card">
+        <!-- Stage Toolbar with View Modes & Cameras -->
+        <div class="stage-toolbar">
+          <div class="view-toggles" role="group" aria-label="Viewport display mode">
+            <button type="button" id="btnSideBySide" class="toggle-btn on"><span>◫</span> Side-by-Side</button>
+            <button type="button" id="btnOgVideo" class="toggle-btn"><span>📹</span> OG Video</button>
+            <button type="button" id="btn3dPitch" class="toggle-btn"><span>🎮</span> 3D Digital Twin</button>
+          </div>
+
+          <!-- Camera switcher -->
+          <div class="cam-group" id="cams"></div>
+
+          <!-- Quick tool chips -->
+          <div class="stage-quick-tools">
+            <button type="button" id="pp" class="cam-btn" style="background:rgba(255,255,255,0.08);border:1px solid var(--bd);color:var(--tx);padding:4px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">Pause</button>
+            <button type="button" id="jumpKickoff" class="cam-btn" style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);color:var(--gr);padding:4px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:700" title="Jump directly to Kickoff at 04:41">⚡ Kickoff (04:41)</button>
+            <button type="button" id="jumpMataGoal" class="cam-btn" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);color:var(--h);padding:4px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:700" title="Jump directly to Max Mata 86 km/h Goal">⚡ Goal 2: Mata</button>
+            <button type="button" id="btnReasoning" class="cam-btn" style="background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.45);color:#c084fc;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:700" title="Explain why the play happened with tactical metrics and past facts">🧠 Reasoning &amp; Facts</button>
+            <button type="button" id="btnMeme" class="cam-btn" style="background:rgba(234,179,8,0.18);border:1px solid rgba(234,179,8,0.45);color:#facc15;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:700" title="Generate viral football memes with Gemini AI">🎭 Meme Studio</button>
+            <button type="button" id="btnHalftimeSummary" class="cam-btn" style="background:rgba(14,165,233,0.18);border:1px solid rgba(14,165,233,0.45);color:#38bdf8;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:700" title="Watch automated first half video summary and voiceover">📺 Halftime Show</button>
+            <button type="button" id="btnSocialHighlights" class="cam-btn" style="background:rgba(255,62,108,0.18);border:1px solid rgba(255,62,108,0.45);color:#ff3e6c;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;font-weight:700" title="Auto-clip video and generate viral social media packages">📱 Viral Clipper</button>
+            <button type="button" id="jumpIntro" class="cam-btn" style="background:rgba(255,255,255,0.06);border:1px solid var(--bd);color:var(--mu);padding:4px 8px;border-radius:8px;cursor:pointer;font-size:11.5px" title="Pre-match TV Intro">Intro (00:00)</button>
+            <label class="tool-chip"><input type="checkbox" id="gh"> Ghost Replay</label>
+            <div id="gl" class="gl-chip"><b>GOAL</b><span id="glt">Line Monitor</span></div>
+            <div id="vr" hidden></div><div id="ar" hidden></div>
+          </div>
+        </div>
+
+        <!-- Dual Viewport Split Grid (Wide & Expansive!) -->
+        <div id="stageSplit" class="stage-split split-5050">
+          <!-- Left: Original Broadcast Video ("OG Video") -->
+          <div id="ogVideoWrap" class="viewport-box" style="position:relative;overflow:hidden;">
+            <div class="view-header-badge" style="display:flex;align-items:center;justify-content:space-between;width:calc(100% - 24px);">
+              <span><span class="dot-rec"></span> BROADCAST CAM · 720p HD</span>
+              <button type="button" id="toggleArOverlay" style="background:rgba(38,242,154,0.18);border:1px solid rgba(38,242,154,0.5);color:#26f29a;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:10.5px;font-weight:700" title="Toggle real-time passing rays and xG trajectories on the turf">✦ AR TURF OVERLAY</button>
+            </div>
+            <video id="ogVideo" playsinline controls preload="metadata"
+              src="Isuzu UTE A-League 2024-25 - Round 6 - Auckland FC v Newcastle Jets.mp4">
+            </video>
+            <canvas id="arCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;"></canvas>
+          </div>
+
+          <!-- Right: Three.js 3D Pitch ("3D Digital Twin") -->
+          <div id="stage" class="viewport-box stage-3d-box">
+            <div class="view-header-badge">
+              <span class="dot-ai"></span> AI 3D TWIN · 10 FPS
+            </div>
+            <video id="hls" playsinline muted controls preload="none" aria-label="Live match video" style="display:none;"></video>
+            <canvas id="cv"></canvas>
+            <div id="pc" class="ov"><small>Pitch control</small><div><span id="pcv">–</span><span class="mu" id="pcw">–</span></div><i><b id="pcb"></b></i></div>
+            <div id="ring" class="ov"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="36" fill="rgba(5,15,30,.7)" stroke="rgba(127,150,190,.35)" stroke-width="5"/><circle id="rc" cx="42" cy="42" r="36" fill="none" stroke="var(--gr)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 226" transform="rotate(-90 42 42)"/></svg><b id="rv">0</b><small id="ru">km/h</small></div>
+            <div id="bn" class="ov"></div>
+            <div id="callout" class="ov" role="status" aria-live="polite"></div>
+            <div id="srcMeta" class="ov" hidden>
+              <span id="srcMetaState" class="meta-state">–</span>
+              <span id="srcMetaProgress">–</span>
+              <span id="srcMetaGemini" class="meta-gemini">–</span>
+            </div>
+            <div id="leg" class="ov"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. Match Timeline & Highlights Scrubber Card -->
+      <section id="tl" class="glass-card timeline-card">
+        <div class="timeline-card-head">
+          <span style="display:flex;align-items:center;gap:8px">⏱ <b>Match Timeline &amp; Key Highlights</b></span>
+          <small><span id="half" class="clock-pill">1st half</span></small>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <small style="color:var(--mu);font-weight:700">0'</small>
+          <div id="trk" style="flex:1"><div id="now"></div></div>
+          <small style="color:var(--mu);font-weight:700">90'</small>
+        </div>
+        <div id="hl"></div>
+      </section>
+
+      <!-- 2. Big, Prominent Real-Time AI Commentary Section -->
+      <section id="cm" class="glass-card commentary-card">
+        <div class="commentary-head">
+          <div class="commentary-head-left">
+            <div id="wv" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <h3>Real-Time AI Tactical Commentary</h3>
+            <span class="ai-badge">● GEMINI PRO AI ENGINE</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button type="button" id="btnGenCommentary" class="cam-btn" style="background:linear-gradient(135deg, rgba(37,99,235,0.3), rgba(124,58,237,0.3));border:1px solid rgba(147,197,253,0.5);color:#93c5fd;padding:3px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700" title="Trigger real-time commentary generation via Google Gemini">✨ Generate with Gemini AI</button>
+            <button type="button" id="btnTts" class="cam-btn" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.18);color:var(--tx);padding:3px 8px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600" title="Toggle audio voice narration">🔊 Voice</button>
+            <select id="langSelect" style="background:rgba(20,30,55,0.85);border:1px solid rgba(255,255,255,0.18);color:var(--tx);padding:3px 8px;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:600" title="Select Commentary Language">
+              <option value="en">🇬🇧 English</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="ar">🇸🇦 العربية</option>
+              <option value="pt">🇧🇷 Português</option>
+              <option value="ja">🇯🇵 日本語</option>
+            </select>
+            <select id="personaSelect" style="background:rgba(20,30,55,0.85);border:1px solid rgba(255,255,255,0.18);color:var(--tx);padding:3px 8px;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:600">
+              <option value="tactical">🧠 Tactical Coach</option>
+              <option value="hype">🔥 Excited Streamer</option>
+              <option value="radio">📻 Radio Play-by-Play</option>
+            </select>
+            <span id="ctsrc" data-source="gemini" class="tag-pill">AI LIVE</span>
+            <small id="cts" style="font-weight:700;color:var(--tx)">0:00</small>
+          </div>
+        </div>
+        <div id="ct">
+          <div class="comm-empty">Connecting to real-time tactical commentary stream...</div>
+        </div>
+      </section>
+    </section>
+
+    <!-- RIGHT SIDEBAR: Live Match Card, Standings, & AI Powered Dashboard Components -->
+    <aside id="colRight" class="sidebar-col">
+      <!-- 1. Live Match Scoreboard Card -->
+      <section class="glass-card match-card" id="liveMatchCard">
+        <div class="match-card-kicker">
+          <span>First Stage · Round 6</span>
+          <span>Go Media Stadium</span>
+        </div>
+
+        <!-- Scoreboard & Crests -->
+        <div class="match-scoreboard">
+          <div class="team-side">
+            <div class="team-crest home">AFC</div>
+            <span class="team-name-lbl" id="tn0">Auckland FC</span>
+          </div>
+          <div class="score-center">
+            <div class="score-digits">
+              <span id="sh">2</span> – <span id="sa">0</span>
+            </div>
+            <div class="clock-pill" id="clock">88:24</div>
+          </div>
+          <div class="team-side">
+            <div class="team-crest away">NEW</div>
+            <span class="team-name-lbl" id="tn1">Newcastle</span>
+          </div>
+        </div>
+
+        <!-- Star Player Duel -->
+        <div class="player-duel-strip">
+          <span>⚡ L. Gillion (37.3 km/h)</span>
+          <span>B. Gibson (5 Shots) 🎯</span>
+        </div>
+
+        <!-- Interactive Tabs -->
+        <div class="tab-pill-row" role="tablist">
+          <button type="button" class="tab-pill on" data-target="tabStats">Statistics</button>
+          <button type="button" class="tab-pill" data-target="tabLineup">Lineup</button>
+          <button type="button" class="tab-pill" data-target="tabFeed">Events</button>
+          <button type="button" class="tab-pill" data-target="tabPlayer">Player</button>
+        </div>
+
+        <!-- Tab Content Area -->
+        <div class="tab-content-area">
+          <!-- Statistics Tab -->
+          <div id="tabStats" class="tab-pane on">
+            <div class="bar">
+              <div><span>xG Expected Goals</span><span><b id="x0">1.82</b> – <b id="x1">0.45</b></span></div>
+              <i><b id="xb0" style="background:var(--h);width:80%"></b><b id="xb1" style="background:var(--a);width:20%"></b></i>
+            </div>
+            <div class="bar">
+              <div><span>xT Expected Threat</span><span><b id="t0">1.44</b> – <b id="t1">0.62</b></span></div>
+              <i><b id="tb0" style="background:var(--h);width:70%"></b><b id="tb1" style="background:var(--a);width:30%"></b></i>
+            </div>
+            <div id="poss" style="margin-top:6px"><i><b id="pb" style="width:57%"></b></i></div>
+            <div id="tstats" class="tstats" style="margin-top:8px"></div>
+            <div class="fastest" id="fastest" style="font-size:11.5px;color:var(--gr);margin-top:4px"></div>
+            <span id="xn0" hidden></span><span id="xn1" hidden></span>
+            <span id="xtn0" hidden></span><span id="xtn1" hidden></span>
+            <div id="wpw" hidden>
+              <svg id="wp" viewBox="0 0 200 48"></svg>
+              <span id="wln0"></span><b id="w0"></b>
+              <b id="w1"></b>
+              <span id="wln1"></span><b id="w2"></b>
+            </div>
+          </div>
+
+          <!-- Lineup Tab -->
+          <div id="tabLineup" class="tab-pane">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+              <div><canvas id="fc0" width="140" height="58"></canvas><small id="f0">4-3-3</small></div>
+              <div><canvas id="fc1" width="140" height="58"></canvas><small id="f1">4-2-3-1</small></div>
+            </div>
+            <div id="wif" style="font-size:12px"></div>
+            <div id="wim"></div>
+          </div>
+
+          <!-- Event Feed Tab -->
+          <div id="tabFeed" class="tab-pane">
+            <div id="tabs" style="display:flex;gap:4px;margin-bottom:6px">
+              <button class="on" data-c="" style="border-radius:12px;padding:2px 8px;font-size:11px">All</button>
+              <button data-c="pass" style="border-radius:12px;padding:2px 8px;font-size:11px">Passes</button>
+              <button data-c="shot" style="border-radius:12px;padding:2px 8px;font-size:11px">Shots</button>
+              <button data-c="def" style="border-radius:12px;padding:2px 8px;font-size:11px">Def</button>
+            </div>
+            <div id="fl"></div>
+          </div>
+
+          <!-- Player Card Tab -->
+          <div id="tabPlayer" class="tab-pane">
+            <h4 id="pn" style="margin:0 0 6px;font-size:13px">Player Stats</h4>
+            <div class="pst">
+              <svg viewBox="0 0 70 80" width="54"><path id="jr" d="M22 6l-16 8 6 14 8-3v46h28V25l8 3 6-14-16-8c-2 6-6 8-12 8s-10-2-12-8z" fill="var(--h)" stroke="#fff" stroke-width="1.5"/><text id="jn" x="35" y="52" text-anchor="middle" font-size="26" font-weight="700" fill="#fff">–</text></svg>
+              <div id="pc2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Watch 3D Replay CTA -->
+        <button type="button" id="btnWatchReplay" class="btn-watch-now">
+          <span>▶</span> Watch 3D Goal Replay
+        </button>
+      </section>
+
+      <!-- 2. League Standing Card -->
+      <section class="glass-card standing-card" id="standingCard">
+        <div class="standing-head">
+          <span>League Standing</span>
+          <span class="tag-pill">A-League 24/25</span>
+        </div>
+        <table class="standing-table">
+          <thead>
+            <tr><th>#</th><th>Team</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr>
+          </thead>
+          <tbody>
+            <tr class="lead">
+              <td>1</td>
+              <td><span class="team-dot-circle" style="background:#2800f0"></span> Auckland FC</td>
+              <td>6</td><td>0</td><td>0</td><td><b>18</b></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><span class="team-dot-circle" style="background:#0a1e3f"></span> Melb. Victory</td>
+              <td>4</td><td>1</td><td>1</td><td>13</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><span class="team-dot-circle" style="background:#ffdc00"></span> Wellington</td>
+              <td>3</td><td>2</td><td>1</td><td>11</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><span class="team-dot-circle" style="background:#e5a823"></span> Newcastle Jets</td>
+              <td>2</td><td>1</td><td>3</td><td>7</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 3. AI POWERED DASHBOARD COMPONENTS (MOVED BELOW LEAGUE STANDING) -->
+      <div class="ai-section-divider">
+        <h2>AI Powered Dashboard</h2>
+        <p>Real time analysis powered by artificial intelligence</p>
+      </div>
+
+      <!-- AI - MVP of the Match Card -->
+      <section class="glass-card mvp-card" id="mvpSection">
+        <div class="mvp-kicker">
+          <span>AI – MVP Of The Match</span>
+          <span class="mvp-score-badge">Score 85</span>
+        </div>
+        <div class="mvp-player-row">
+          <div class="mvp-avatar" aria-hidden="true">⚡</div>
+          <div class="mvp-info">
+            <b id="mvpPlayerName">Liam Gillion</b>
+            <small id="mvpPlayerDesc">Auckland FC · LW #14 · 37.3 km/h top</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2x2 Match Metrics Grid -->
+      <div class="glass-card metrics-grid">
+        <div class="metric-box active">
+          <div class="metric-box-top"><span>Goals</span> <span>⚽</span></div>
+          <b>2 Goals</b>
+          <small>Auckland FC (Mata 88')</small>
+        </div>
+        <div class="metric-box">
+          <div class="metric-box-top"><span>Possession</span> <span>⏱</span></div>
+          <b id="ph">57%</b>
+          <small id="pa">43% Newcastle</small>
+        </div>
+        <div class="metric-box">
+          <div class="metric-box-top"><span>Pressing</span> <span>⚡</span></div>
+          <b>9.4 avg</b>
+          <small>295 presses total</small>
+        </div>
+        <div class="metric-box">
+          <div class="metric-box-top"><span>xG Index</span> <span>🎯</span></div>
+          <b>1.82</b>
+          <small>0.45 Newcastle</small>
+        </div>
+      </div>
+
+      <!-- AI Prediction Card -->
+      <section class="glass-card pred-card">
+        <div class="pred-card-head">
+          <b>AI Win Prediction</b>
+          <span class="tag-pill">Live Model</span>
+        </div>
+        <div class="pred-row">
+          <div class="pred-team">
+            <span class="team-dot-circle" style="background:#2800f0"></span>
+            <span>Auckland FC</span>
+          </div>
+          <svg class="pred-spark" viewBox="0 0 50 16">
+            <path d="M0,14 Q15,10 25,6 T50,2" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="pred-val" style="color:var(--gr)">78%</span>
+        </div>
+        <div class="pred-row">
+          <div class="pred-team">
+            <span class="team-dot-circle" style="background:#e5a823"></span>
+            <span>Newcastle</span>
+          </div>
+          <svg class="pred-spark" viewBox="0 0 50 16">
+            <path d="M0,4 Q15,8 25,12 T50,14" fill="none" stroke="#f97316" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="pred-val" style="color:var(--a)">15%</span>
+        </div>
+        <div class="pred-row">
+          <div class="pred-team">
+            <span class="team-dot-circle" style="background:#7f97bd"></span>
+            <span>Draw</span>
+          </div>
+          <span class="pred-val" style="color:var(--mu)">7%</span>
+        </div>
+      </section>
+    </aside>
+  </main>
+</div>
+
+<!-- ================================================================= -->
+<!-- FEATURE MODALS: Settings, Analytics, Momentum & Fixtures           -->
+<!-- ================================================================= -->
+
+<!-- 1. Settings Dialog -->
+<dialog id="settingsDlg" class="feature-dlg" aria-labelledby="settingsTitle">
+  <div class="feat-dlg-head">
+    <h3 id="settingsTitle"><span>⚙</span> Tactical &amp; Visual Settings</h3>
+    <button type="button" class="dlg-x" onclick="document.getElementById('settingsDlg').close()">✕</button>
+  </div>
+  <div class="feat-dlg-body">
+    <p class="dlg-note">Configure live 3D tactical twin overlays, telemetry display, and rendering performance.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="metric-box">
+        <b>3D Pitch Overlays</b>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked onchange="document.getElementById('leg').children[0].click()"> Pitch Control Surface</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked onchange="document.getElementById('leg').children[1].click()"> Density Heatmap</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked onchange="document.getElementById('leg').children[2].click()"> Passing Network Links</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked onchange="document.getElementById('leg').children[3].click()"> Defensive &amp; Offside Line</label>
+        </div>
+      </div>
+      <div class="metric-box">
+        <b>Stream &amp; Playback Sync</b>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <label style="display:flex;justify-content:space-between"><span>Playout Jitter Delay:</span> <b>250 ms</b></label>
+          <label style="display:flex;justify-content:space-between"><span>Tracking Rate:</span> <b>10 FPS</b></label>
+          <label style="display:flex;justify-content:space-between"><span>Render Rate:</span> <b>60 FPS WebGL</b></label>
+          <label style="display:flex;justify-content:space-between"><span>AI Commentary:</span> <b style="color:var(--gr)">Active</b></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 2. Analytics Dialog -->
+<dialog id="analyticsDlg" class="feature-dlg" aria-labelledby="analyticsTitle">
+  <div class="feat-dlg-head">
+    <h3 id="analyticsTitle"><span>📊</span> Deep Match Analytics &amp; Threat Matrix</h3>
+    <button type="button" class="dlg-x" onclick="document.getElementById('analyticsDlg').close()">✕</button>
+  </div>
+  <div class="feat-dlg-body">
+    <table class="matrix-table">
+      <thead>
+        <tr><th>Auckland FC</th><th>Metric</th><th>Newcastle Jets</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>2</b></td><td>Goals</td><td><b>0</b></td></tr>
+        <tr><td><b>1.82</b></td><td>Expected Goals (xG)</td><td>0.45</td></tr>
+        <tr><td><b>1.44</b></td><td>Expected Threat (xT)</td><td>0.62</td></tr>
+        <tr><td><b>57.3%</b></td><td>Possession Control</td><td>42.7%</td></tr>
+        <tr><td><b>18 (8)</b></td><td>Total Shots (On Target)</td><td>6 (3)</td></tr>
+        <tr><td><b>466 (85%)</b></td><td>Passes Completed</td><td>348 (83%)</td></tr>
+        <tr><td><b>48</b></td><td>Defensive Line Breaks</td><td>31</td></tr>
+        <tr><td><b>295 (9.4 avg)</b></td><td>Pressing Engagements</td><td>182 (6.1 avg)</td></tr>
+        <tr><td>34</td><td>Turnovers Conceded</td><td><b>44</b></td></tr>
+        <tr><td><b>64%</b></td><td>Aerial Duels Won</td><td>36%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</dialog>
+
+<!-- 3. Momentum Dialog -->
+<dialog id="momentumDlg" class="feature-dlg" aria-labelledby="momentumTitle">
+  <div class="feat-dlg-head">
+    <h3 id="momentumTitle"><span>📈</span> Match Momentum &amp; EPV Swing Timeline</h3>
+    <button type="button" class="dlg-x" onclick="document.getElementById('momentumDlg').close()">✕</button>
+  </div>
+  <div class="feat-dlg-body">
+    <p class="dlg-note">Expected Possession Value (EPV) swings and momentum trends throughout the match.</p>
+    <div style="background:rgba(8,14,26,0.7);padding:14px;border-radius:14px;border:1px solid var(--bd)">
+      <svg viewBox="0 0 680 140" style="width:100%;height:140px">
+        <line x1="0" y1="70" x2="680" y2="70" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <!-- Auckland momentum curve -->
+        <path d="M0,70 Q40,60 80,45 T160,80 T240,40 T320,65 T400,30 T480,50 T560,20 T640,15 L680,20" fill="none" stroke="#2800f0" stroke-width="3"/>
+        <!-- Newcastle momentum curve -->
+        <path d="M0,70 Q40,80 80,95 T160,60 T240,100 T320,75 T400,110 T480,90 T560,120 T640,125 L680,120" fill="none" stroke="#f97316" stroke-width="2.5" stroke-dasharray="3 3"/>
+        <!-- Event dots -->
+        <circle cx="80" cy="45" r="5" fill="#f97316"/><text x="80" y="32" fill="#fff" font-size="11" text-anchor="middle">Gibson Double Shot (02')</text>
+        <circle cx="390" cy="30" r="5" fill="#2800f0"/><text x="390" y="18" fill="#fff" font-size="11" text-anchor="middle">Goal 1: 1-0 (85')</text>
+        <circle cx="560" cy="20" r="6" fill="#22c55e"/><text x="560" y="10" fill="#22c55e" font-size="12" font-weight="700" text-anchor="middle">Goal 2: Mata 2-0 (88')</text>
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--mu)">
+        <span>0' Kickoff</span><span>45' Halftime</span><span>90' Fulltime</span>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 4. Fixtures Dialog -->
+<dialog id="fixturesDlg" class="feature-dlg" aria-labelledby="fixturesTitle">
+  <div class="feat-dlg-head">
+    <h3 id="fixturesTitle"><span>📅</span> A-League 2024/25 Fixtures &amp; Results</h3>
+    <button type="button" class="dlg-x" onclick="document.getElementById('fixturesDlg').close()">✕</button>
+  </div>
+  <div class="feat-dlg-body">
+    <div class="fixture-row">
+      <div class="fixture-teams">
+        <span class="team-dot-circle" style="background:#2800f0"></span>
+        <span>Auckland FC</span>
+        <b style="color:#22c55e;margin:0 8px">2 – 0</b>
+        <span>Newcastle Jets</span>
+        <span class="team-dot-circle" style="background:#e5a823"></span>
+      </div>
+      <span class="fixture-badge live">● Full Time</span>
+    </div>
+    <div class="fixture-row">
+      <div class="fixture-teams">
+        <span class="team-dot-circle" style="background:#0a1e3f"></span>
+        <span>Melbourne Victory</span>
+        <span style="color:var(--mu);margin:0 8px">vs</span>
+        <span>Sydney FC</span>
+        <span class="team-dot-circle" style="background:#63b3ed"></span>
+      </div>
+      <span class="fixture-badge sched">Tomorrow 19:45</span>
+    </div>
+    <div class="fixture-row">
+      <div class="fixture-teams">
+        <span class="team-dot-circle" style="background:#ffdc00"></span>
+        <span>Wellington Phoenix</span>
+        <span style="color:var(--mu);margin:0 8px">vs</span>
+        <span>Central Coast</span>
+        <span class="team-dot-circle" style="background:#2b6cb0"></span>
+      </div>
+      <span class="fixture-badge sched">Sunday 15:00</span>
+    </div>
+    <div class="fixture-row">
+      <div class="fixture-teams">
+        <span class="team-dot-circle" style="background:#dd6b20"></span>
+        <span>Brisbane Roar</span>
+        <span style="color:var(--mu);margin:0 8px">vs</span>
+        <span>Macarthur FC</span>
+        <span class="team-dot-circle" style="background:#e2e8f0"></span>
+      </div>
+      <span class="fixture-badge sched">Sunday 17:00</span>
+    </div>
+  </div>
+</dialog>
+
+<!-- Source Selection Dialog -->
+<dialog id="srcDlg" aria-labelledby="srcDlgTitle">
+ <div class="dlg-head">
+  <div class="dlg-id">
+   <span class="dlg-logo" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 34 34"><path d="M17 2l14 15-14 15L3 17z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M17 9l7 8-7 8-7-8z" fill="currentColor"/></svg></span>
+   <div>
+    <span class="dlg-kicker">Match setup</span>
+    <h2 id="srcDlgTitle">Choose your match source</h2>
+    <small id="srcDlgSub">Pick one input below to open the analytics desk. Every connected value is validated end to end, and you can switch sources at any time.</small>
+   </div>
+  </div>
+  <button type="button" id="dlgClose" class="dlg-x" aria-label="Close source dialog">✕</button>
+ </div>
+ <div class="dlg-statusbar">
+  <span id="gateDot" class="dot warn" aria-hidden="true"></span>
+  <div class="dlg-statusbox">
+   <p class="dlg-status" id="healthTxt" role="status">Checking backend…</p>
+   <p class="dlg-note" id="healthMeta"></p>
+  </div>
+  <button type="button" id="healthBtn">Retry</button>
+ </div>
+ <div class="dlg-body">
+  <div id="srcCards">
+  <section class="src-card" style="--ca:var(--ac)">
+   <div class="src-head">
+    <span class="src-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
+    <div><h3>Upload Video</h3><p>Analyse a recorded MP4, MKV or MOV clip through the backend tracker.</p></div>
+   </div>
+   <label>Video file<input id="upFile" type="file" accept="video/*"></label>
+   <div class="two">
+    <label>Home team<input id="upHomeTeam" type="text" placeholder="Home" autocomplete="off"></label>
+    <label>Away team<input id="upAwayTeam" type="text" placeholder="Away" autocomplete="off"></label>
+   </div>
+   <div class="two">
+    <label>Home color<div class="color-picker-row"><input id="upHomeColor" type="color" value="#1B4DFF"><span class="color-hex" id="upHomeColorHex">#1B4DFF</span></div></label>
+    <label>Away color<div class="color-picker-row"><input id="upAwayColor" type="color" value="#FF7A1B"><span class="color-hex" id="upAwayColorHex">#FF7A1B</span></div></label>
+   </div>
+   <div class="row"><button type="button" id="upStart" class="primary">Start ingest</button></div>
+   <p class="dlg-note" id="upNote">Backend tracker processes video frame by frame.</p>
+  </section>
+
+  <section class="src-card" style="--ca:var(--ac)">
+   <div class="src-head">
+    <span class="src-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg></span>
+    <div><h3>RTSP Stream</h3><p>Connect a live camera feed.</p></div>
+   </div>
+   <label>Stream URL<input id="rtspUrl" type="url" placeholder="rtsp://…" spellcheck="false" autocomplete="off"></label>
+   <div class="two">
+    <label>Home team<input id="rtspHomeTeam" type="text" placeholder="Home" autocomplete="off"></label>
+    <label>Away team<input id="rtspAwayTeam" type="text" placeholder="Away" autocomplete="off"></label>
+   </div>
+   <div class="two">
+    <label>Home color<div class="color-picker-row"><input id="rtspHomeColor" type="color" value="#1B4DFF"><span class="color-hex" id="rtspHomeColorHex">#1B4DFF</span></div></label>
+    <label>Away color<div class="color-picker-row"><input id="rtspAwayColor" type="color" value="#FF7A1B"><span class="color-hex" id="rtspAwayColorHex">#FF7A1B</span></div></label>
+   </div>
+   <div class="row"><button type="button" id="rtspStart" class="primary">Connect feed</button></div>
+   <p class="dlg-note" id="rtspNote">Low-latency live stream processing.</p>
+  </section>
+
+  <section class="src-card" style="--ca:var(--h)">
+   <div class="src-head">
+    <span class="src-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></span>
+    <div><h3>Backend Simulator</h3><p>Generate a synthetic 25 fps match through the full pipeline.</p></div>
+   </div>
+   <label>Match id<input id="simId" type="text" value="demo-1" spellcheck="false" autocomplete="off"></label>
+   <div class="row"><button type="button" id="simStart" class="primary">Start simulator</button><button type="button" id="simStop" class="ghost">Stop</button></div>
+   <p class="dlg-note">Writes a synthetic 25 fps match through the full backend pipeline.</p>
+  </section>
+
+  <section class="src-card" style="--ca:var(--a)">
+   <div class="src-head">
+    <span class="src-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="m18 16 .8 2.2L21 19l-2.2.8L18 22l-.8-2.2L15 19l2.2-.8z"/></svg></span>
+    <div><h3>Local Demo 1</h3><p>Preview every panel with synthetic mock data. Not live, no backend.</p></div>
+   </div>
+   <p class="dlg-note">Generated in-browser with synthetic mathematical player and ball kinematics.</p>
+   <div class="row"><button type="button" id="demoStart" class="ghost">Run synthetic demo</button></div>
+  </section>
+
+  <section class="src-card" style="--ca:var(--gr)">
+   <div class="src-head">
+    <span class="src-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></svg></span>
+    <div><h3>Demo 2: Match Dataset</h3><p>Auckland FC vs Newcastle. Real SkillCorner tracking &amp; events.</p></div>
+   </div>
+   <label>Match starting point
+    <select id="demo2Scene" style="width:100%;background:rgba(4,10,21,.6);border:1px solid var(--bd);color:var(--tx);padding:4px 8px;border-radius:6px;font:inherit">
+     <option value="kickoff" selected>1st Half Kickoff (04:41) - Pure Live</option>
+     <option value="intro">Pre-match broadcast intro (00:00 - Walkout &amp; Lineups)</option>
+     <option value="shot">Newcastle Counter &amp; Gibson Strike (07:04)</option>
+     <option value="goal">Auckland FC Goal 2: Max Mata (01:48:10)</option>
+    </select>
+   </label>
+   <p class="dlg-note">Replays real 10 fps tracking, ball trajectory, passes, and Mata's 86 km/h goal directly from the 22 CSV files.</p>
+   <div class="row"><button type="button" id="demo2Start" class="primary">Replay match dataset</button></div>
+  </section>
+  </div>
+
+  <section class="card gate-card" id="prepCard" hidden aria-labelledby="prepTitle">
+   <div class="gate-head">
+    <div>
+     <span class="gate-kicker">Source preparation</span>
+     <h3 id="prepTitle">Opening the analytics desk…</h3>
+     <p class="dlg-note" id="prepSub">The backend is starting the source.</p>
+    </div>
+    <span class="gate-badge" id="prepState" data-state="starting">starting</span>
+   </div>
+   <ol class="gate-steps" id="prepSteps" aria-label="Source preparation progress"></ol>
+   <p class="gate-meta" id="prepMeta" role="status"></p>
+   <p class="err" id="prepErr" role="alert"></p>
+   <div class="row">
+    <button type="button" id="prepAction" class="primary" hidden>Try again</button>
+    <button type="button" id="prepRefresh">Check readiness</button>
+    <button type="button" id="prepBack" class="ghost">Change source</button>
+   </div>
+  </section>
+
+  <section class="card gate-card calib-card" id="calibCard" hidden aria-labelledby="calibTitle">
+   <div class="gate-head">
+    <div>
+     <span class="gate-kicker">Guided calibration</span>
+     <h3 id="calibTitle">Calibrate this camera</h3>
+     <p class="dlg-note" id="calibSub">The backend auto-detects pitch landmarks from a sampled frame. Confirm them, try another frame, or place the points yourself.</p>
+    </div>
+    <span class="gate-badge" id="calibState" data-state="needs_calibration">needs calibration</span>
+   </div>
+   <div class="calib-suggest" id="calibSuggest" hidden>
+    <div class="calib-suggest-head">
+     <div>
+      <span class="gate-kicker">Auto-detected</span>
+      <h4>Are these calibration points correct?</h4>
+     </div>
+     <span class="gate-badge" id="calibSuggestBadge" data-state="needs_calibration">detecting&hellip;</span>
+    </div>
+    <div class="calib-grid">
+     <div class="calib-view">
+      <div class="calib-frame">
+       <div class="calib-shot">
+        <img id="calibSuggestImg" alt="Auto-detected pitch landmarks on a sampled frame" draggable="false" hidden>
+       </div>
+      </div>
+      <p class="dlg-note" id="calibSuggestInfo" role="status" aria-live="polite"></p>
+      <p class="err" id="calibSuggestErr" role="alert"></p>
+     </div>
+     <div class="calib-suggest-side">
+      <ol id="calibSuggestList" class="calib-list"></ol>
+      <div class="row">
+       <button type="button" id="calibAccept" class="primary">Accept landmarks</button>
+       <button type="button" id="calibRetry">Re-detect</button>
+      </div>
+      <div class="row">
+       <button type="button" id="calibManual" class="ghost">Place points manually</button>
+       <button type="button" id="calibSuggestBack" class="ghost">Change source</button>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div class="calib-seek" id="calibSeek" hidden>
+    <div class="calib-suggest-head">
+     <div>
+      <span class="gate-kicker">Video scan</span>
+      <h4>Choose a clear frame</h4>
+     </div>
+     <span class="gate-badge" id="calibSeekBadge" data-state="needs_calibration">scan ready</span>
+    </div>
+    <label>Sample time (seconds into video)<input id="calibSeekTime" type="number" min="0" step="0.5" value="0"></label>
+    <p class="dlg-note" id="calibSeekMsg">Sample another frame if the first one had blurred markings.</p>
+    <p class="err" id="calibSeekErr" role="alert"></p>
+    <div class="row">
+     <button type="button" id="calibSeekScan" class="primary">Scan this frame</button>
+    </div>
+   </div>
+
+   <div id="calibManualPanel">
+    <div class="calib-grid">
+     <div class="calib-view">
+      <div class="calib-frame" id="calibFrame">
+       <div class="calib-shot">
+        <img id="calibImg" alt="Sampled video frame for pitch calibration" draggable="false">
+        <svg id="calibMarks" class="calib-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+       </div>
+      </div>
+      <p class="dlg-note" id="calibHint">Click each named landmark on the pitch. Place at least 4 points to compute the camera perspective.</p>
+      <p class="err" id="calibErr" role="alert"></p>
+     </div>
+     <div class="side">
+      <div class="calib-next">
+       <span class="gate-kicker">Next landmark</span>
+       <h4 id="calibLandmark">–</h4>
+      </div>
+      <ol id="calibList" class="calib-list"></ol>
+      <p class="calib-info" id="calibInfo" role="status" aria-live="polite"></p>
+      <div class="row">
+       <button type="button" id="calibUndo">Undo point</button>
+       <button type="button" id="calibReset" class="ghost">Reset all</button>
+       <button type="button" id="calibPreviewBtn">Preview</button>
+      </div>
+      <div class="row">
+       <button type="button" id="calibSubmit" class="primary">Apply calibration</button>
+       <button type="button" id="calibBack" class="ghost">Change source</button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <section class="card span2" id="resumeCard" hidden>
+   <h4>Running sources</h4>
+   <div id="srcList" class="srclist"></div>
+  </section>
+  <div id="dlgErr" class="err" role="alert"></div>
+  <div id="dlgOk" class="ok" role="status"></div>
+ </div>
+ <div class="dlg-foot">
+  <details>
+   <summary>Backend connection &amp; current source</summary>
+   <div class="two">
+    <label>API base URL<input id="apiBase" type="url" spellcheck="false" autocomplete="off"></label>
+    <label>API key (optional, never stored)<input id="apiKey" type="password" autocomplete="off" spellcheck="false"></label>
+   </div>
+   <button type="button" id="stopBtn" class="danger" disabled>Stop current source</button>
+  </details>
+  <p class="dlg-legal"><span>ProVision AI · live match desk</span><span>Analytics opens once a source is connected.</span></p>
+ </div>
+</dialog>
+
+<!-- Social Media Clipper Dialog -->
+<dialog id="socialDlg" class="source-dialog" style="max-width:680px;border-radius:14px;background:#0d1526;color:#e8f0fe;border:1px solid rgba(255,255,255,0.18);padding:20px;box-shadow:0 25px 60px rgba(0,0,0,0.8);">
+ <div class="dlg-head" style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:16px;">
+  <div>
+   <h3 style="margin:0;font-size:16px;display:flex;align-items:center;gap:8px;">📱 Broadcaster Social Highlights &amp; AI Clipper</h3>
+   <p style="margin:4px 0 0 0;font-size:12px;color:var(--mu);">Exact Event Timestamp Slicing + Catchy Gemini AI Background Soundtrack + 3D Flyover</p>
+  </div>
+  <button type="button" id="socialDlgClose" class="dlg-close" aria-label="Close" style="background:transparent;border:none;color:var(--mu);font-size:20px;cursor:pointer;">✕</button>
+ </div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+  <div>
+   <div style="margin-bottom:8px;">
+    <label style="font-size:11px;color:var(--mu);font-weight:600;display:block;margin-bottom:4px;">Target Match Moment &amp; Exact Timestamp:</label>
+    <select id="socialEventSelect" style="width:100%;box-sizing:border-box;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);border-radius:6px;color:#fff;padding:6px 10px;font-size:11.5px;font-weight:600;cursor:pointer;">
+     <option value="6490">⚡ Goal 2: Max Mata 86.3 km/h Rocket (01:48:10)</option>
+     <option value="5421">⚡ Goal 1: Auckland FC Breakthrough (01:30:21)</option>
+     <option value="current">🎯 Current Video Position (Live Scrubber)</option>
+     <option value="281">⏱ Whistle Blows &amp; 1st Half Kickoff (04:41)</option>
+     <option value="1959">🪄 Transitional Counter-Attack (32:39)</option>
+     <option value="4286">🎯 High-Speed Shot on Target (01:11:26)</option>
+    </select>
+   </div>
+   <img id="socialPosterImg" alt="Gemini Action Poster" style="display:none;width:100%;border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.15);aspect-ratio:16/9;object-fit:cover;">
+   <video id="socialClipVideo" controls playsinline style="width:100%;border-radius:8px;background:#000;aspect-ratio:16/9;border:1px solid rgba(255,255,255,0.1);"></video>
+   <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:11px;">
+    <span class="tag-pill" style="background:rgba(38,242,154,0.2);color:#26f29a;">🎮 3D Twin Flyover</span>
+    <span class="tag-pill" style="background:rgba(168,85,247,0.25);color:#c084fc;">🎵 AI Catchy Soundtrack</span>
+    <span class="tag-pill" style="background:rgba(234,179,8,0.25);color:#facc15;">⚡ Exact Event Sync</span>
+    <span class="tag-pill" style="background:rgba(255,62,108,0.2);color:#ff3e6c;">9:16 Reel</span>
+   </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+   <div id="socialHeadline" style="font-weight:700;font-size:13.5px;color:#fff;">UNSTOPPABLE! 🚀 Max Mata 86 km/h Goal</div>
+   <div>
+    <label style="font-size:11px;color:var(--mu);font-weight:600;display:block;margin-bottom:4px;">Gemini Viral Caption:</label>
+    <textarea id="socialCaption" rows="4" readonly style="width:100%;box-sizing:border-box;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#e2e8f0;font-size:11px;padding:8px;resize:none;font-family:inherit;"></textarea>
+    <button type="button" id="socialCopyCaption" style="margin-top:6px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);color:#60a5fa;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:600;width:100%;">📋 Copy Viral Caption</button>
+   </div>
+   <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;font-size:11px;border-left:3px solid #ff3e6c;">
+    <b style="color:#ff3e6c;">Tactical Breakdown:</b>
+    <div id="socialTactical" style="margin-top:3px;color:var(--mu);line-height:1.4;">Rapid transition against broken defensive line.</div>
+   </div>
+   <div id="socialTags" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+  </div>
+ </div>
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;border-top:1px solid rgba(255,255,255,0.1);padding-top:14px;">
+  <button type="button" id="socialRegenerateBtn" style="background:linear-gradient(135deg, #2563eb, #7c3aed);border:none;color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">✨ Re-Generate with Gemini AI</button>
+  <a id="socialDownloadBtn" download="highlight.mp4" href="#" style="background:#2563eb;color:#fff;text-decoration:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">⬇ Download MP4 Video</a>
+ </div>
+</dialog>
+
+<!-- Feature 8: Deep Tactical Reasoning & Historical Facts Dialog -->
+<dialog id="reasoningDlg" class="source-dialog" style="max-width:680px;border-radius:14px;background:#0d1526;color:#e8f0fe;border:1px solid rgba(168,85,247,0.3);padding:22px;box-shadow:0 25px 60px rgba(0,0,0,0.85);">
+<div class="dlg-head" style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:16px;">
+ <div>
+  <h3 style="margin:0;font-size:16px;display:flex;align-items:center;gap:8px;">🧠 Deep Tactical Reasoning &amp; Historical Facts</h3>
+  <p style="margin:4px 0 0 0;font-size:12px;color:var(--mu);">Powered by Gemini 3.8 Flash · Explaining why events happen with spatial data and stats</p>
+ </div>
+ <button type="button" id="reasoningDlgClose" class="dlg-close" aria-label="Close" style="background:transparent;border:none;color:var(--mu);font-size:20px;cursor:pointer;">✕</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;">
+ <div style="background:rgba(168,85,247,0.1);border-left:3px solid #a855f7;padding:12px;border-radius:6px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+   <b style="color:#c084fc;font-size:13px;">Executive Tactical Rationale:</b>
+   <span id="reasoningRating" class="tag-pill" style="background:#a855f7;color:#fff;font-weight:700;">9.4 / 10 EXECUTION</span>
+  </div>
+  <p id="reasoningSummary" style="margin:6px 0 0 0;font-size:12px;line-height:1.5;color:#e2e8f0;">Analyzing event structure...</p>
+ </div>
+ <div style="background:rgba(255,255,255,0.03);padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);">
+  <b style="color:#38bdf8;font-size:12px;">Spatial Breakdown &amp; Defensive Gaps:</b>
+  <p id="reasoningSpatial" style="margin:6px 0 0 0;font-size:11.5px;line-height:1.5;color:var(--mu);">Spatial calculations...</p>
+ </div>
+ <div style="background:rgba(255,255,255,0.03);padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);">
+  <b style="color:#facc15;font-size:12px;">Historical Trends &amp; Data Facts:</b>
+  <ul id="reasoningFacts" style="margin:6px 0 0 0;padding-left:18px;font-size:11.5px;line-height:1.6;color:#cbd5e1;"></ul>
+ </div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+  <div style="background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:10px;border-radius:6px;">
+   <b style="color:#f87171;font-size:11.5px;">Defensive Counterfactual:</b>
+   <p id="reasoningCounter" style="margin:4px 0 0 0;font-size:11px;line-height:1.4;color:#cbd5e1;">Defensive fix...</p>
+  </div>
+  <div style="background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:10px;border-radius:6px;">
+   <b style="color:#4ade80;font-size:11.5px;">Recommended Tactical Adjustment:</b>
+   <p id="reasoningAdjustment" style="margin:4px 0 0 0;font-size:11px;line-height:1.4;color:#cbd5e1;">Tactical recommendation...</p>
+  </div>
+ </div>
+</div>
+<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+ <button type="button" id="reasoningReanalyzeBtn" style="background:#7c3aed;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">✨ Re-Analyze with Gemini Reasoning</button>
+</div>
+</dialog>
+
+<!-- Feature 9: Viral Football Meme Studio Dialog -->
+<dialog id="memeDlg" class="source-dialog" style="max-width:560px;border-radius:14px;background:#0d1526;color:#e8f0fe;border:1px solid rgba(234,179,8,0.3);padding:20px;box-shadow:0 25px 60px rgba(0,0,0,0.85);">
+<div class="dlg-head" style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;margin-bottom:14px;">
+ <div>
+  <h3 style="margin:0;font-size:16px;display:flex;align-items:center;gap:8px;">🎭 Viral Football Meme Studio</h3>
+  <p style="margin:4px 0 0 0;font-size:12px;color:var(--mu);">Gemini 3.8 Flash AI Meme Concepts &amp; Generated Artwork</p>
+ </div>
+ <button type="button" id="memeDlgClose" class="dlg-close" aria-label="Close" style="background:transparent;border:none;color:var(--mu);font-size:20px;cursor:pointer;">✕</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+ <!-- Meme Image Card with Classic Top & Bottom Impact Text Overlay -->
+ <div id="memeCanvasBox" style="position:relative;width:100%;max-width:420px;aspect-ratio:1/1;background:#050b14;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;">
+  <img id="memeImg" alt="Meme Art" style="width:100%;height:100%;object-fit:cover;" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect width='400' height='400' fill='%23111827'/><text x='50%25' y='50%25' font-size='20' fill='%239ca3af' text-anchor='middle'>Generating AI Meme...</text></svg>">
+  <div id="memeTopText" style="position:absolute;top:12px;left:10px;right:10px;text-align:center;font-family:'Impact',sans-serif;font-size:24px;color:#fff;text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;text-transform:uppercase;letter-spacing:1px;pointer-events:none;">WHEN THE STRIKER WINDS UP</div>
+  <div id="memeBottomText" style="position:absolute;bottom:14px;left:10px;right:10px;text-align:center;font-family:'Impact',sans-serif;font-size:24px;color:#fff;text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;text-transform:uppercase;letter-spacing:1px;pointer-events:none;">AND THE DEFENSE IS COMPLETELY AFK</div>
+ </div>
+ <div style="width:100%;">
+  <b id="memeHeadline" style="font-size:13px;color:#facc15;display:block;margin-bottom:4px;">Bro had time to file taxes before shooting 💀</b>
+  <textarea id="memeCaption" rows="3" readonly style="width:100%;box-sizing:border-box;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#e2e8f0;font-size:11px;padding:8px;resize:none;font-family:inherit;"></textarea>
+ </div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+ <button type="button" id="memeRegenerateBtn" style="background:#ca8a04;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">✨ Re-Generate Meme</button>
+ <button type="button" id="memeCopyCaptionBtn" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">📋 Copy Caption</button>
+</div>
+</dialog>
+
+<!-- Feature 11: First Half Video Summary & Halftime Show Dialog -->
+<dialog id="halftimeDlg" class="source-dialog" style="max-width:720px;border-radius:14px;background:#0d1526;color:#e8f0fe;border:1px solid rgba(14,165,233,0.3);padding:22px;box-shadow:0 25px 60px rgba(0,0,0,0.85);">
+<div class="dlg-head" style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:16px;">
+ <div>
+  <h3 style="margin:0;font-size:16px;display:flex;align-items:center;gap:8px;">📺 Halftime Broadcast Studio Show</h3>
+  <p style="margin:4px 0 0 0;font-size:12px;color:var(--mu);">Automated 45-Minute Review Video &amp; Native Gemini Voiceover</p>
+ </div>
+ <button type="button" id="halftimeDlgClose" class="dlg-close" aria-label="Close" style="background:transparent;border:none;color:var(--mu);font-size:20px;cursor:pointer;">✕</button>
+</div>
+<div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;">
+ <div>
+  <video id="halftimeVideo" controls playsinline style="width:100%;border-radius:8px;background:#000;aspect-ratio:16/9;border:1px solid rgba(255,255,255,0.15);"></video>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+   <button type="button" id="halftimePlayVoiceBtn" style="background:#0284c7;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:11.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">🎙 Play Studio Voiceover</button>
+   <span class="tag-pill" style="background:rgba(14,165,233,0.2);color:#38bdf8;">Halftime Score: 2 - 0</span>
+  </div>
+ </div>
+ <div style="display:flex;flex-direction:column;gap:10px;">
+  <div id="halftimeTitle" style="font-weight:700;font-size:13.5px;color:#fff;">Halftime Tactical Review: Auckland FC Lead 2-0</div>
+  <div style="background:rgba(255,255,255,0.03);padding:10px;border-radius:6px;border-left:3px solid #38bdf8;">
+   <b style="color:#38bdf8;font-size:11.5px;">Tactical Overview:</b>
+   <p id="halftimeOverview" style="margin:4px 0 0 0;font-size:11px;line-height:1.45;color:#e2e8f0;">Loading breakdown...</p>
+  </div>
+  <div style="background:rgba(255,255,255,0.03);padding:10px;border-radius:6px;">
+   <b style="color:#facc15;font-size:11.5px;">Key First-Half Moments:</b>
+   <ul id="halftimeMoments" style="margin:4px 0 0 0;padding-left:16px;font-size:11px;line-height:1.5;color:#cbd5e1;"></ul>
+  </div>
+  <div style="background:rgba(34,197,94,0.08);padding:8px;border-radius:6px;border-left:3px solid #22c55e;">
+   <b style="color:#4ade80;font-size:11px;">Second Half Keys:</b>
+   <ul id="halftimeKeys" style="margin:3px 0 0 0;padding-left:14px;font-size:10.5px;line-height:1.4;color:#cbd5e1;"></ul>
+  </div>
+ </div>
+</div>
+<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+ <button type="button" id="halftimeRefreshBtn" style="background:#0284c7;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">✨ Refresh Halftime Show with Gemini</button>
+</div>
+</dialog>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<script src="dashboard-contract.js"></script>
+<script src="dashboard-demo.js"></script>
+<script src="dashboard-full-dataset.js"></script>
+<script src="dashboard-demo2.js"></script>
+<script src="provision.js"></script>
+</body>
+</html>

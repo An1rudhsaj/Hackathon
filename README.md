@@ -68,26 +68,6 @@ Sports Craft Engine is an advanced real-time football (soccer) match analysis pl
 - **Multiple Camera Modes** - Different viewing angles and perspectives
 - **AR Overlays** - Augmented reality tactical overlays
 
-## 🏗️ Architecture
-
-```
-┌─────────────────┐
-│   Dashboard     │  ← HTML/CSS/JavaScript (Three.js, WebSocket)
-│   (Frontend)    │
-└────────┬────────┘
-         │
-         ↓ WebSocket (/live) + REST API
-┌─────────────────┐
-│   Backend       │  ← FastAPI + Socket.IO
-│  (Python)       │
-└────────┬────────┘
-         │
-         ├─→ Computer Vision (YOLO/Mock)
-         ├─→ Gemini AI (Commentary, Analysis)
-         ├─→ SQLite Database
-         └─→ FFmpeg (Video Processing)
-```
-
 ## 📋 Prerequisites
 
 ### Backend Requirements

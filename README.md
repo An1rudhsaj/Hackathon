@@ -18,8 +18,8 @@ Sports Craft Engine is an advanced real-time football (soccer) match analysis pl
  
 > 📹 If the video preview is not rendered by GitHub, download and watch:
 >
-> **[![Watch Demo](./demo.gif)**
- 
+> **[![Watch Demo](./demo.gif)]**
+
 ---
  
 ## 🏗️ Architecture

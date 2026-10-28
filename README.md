@@ -22,7 +22,7 @@ AI-powered player-centric sports intelligence platform that transforms match eve
  
 > If GitHub does not render the video, click below:
  
-📺 **Demo Video:** [Watch Demo](assets/demo.mp4)
+📺 **Demo Video:** [Watch Demo](demo.mp4)
  
 ---
  ## 🏗️ Architecture

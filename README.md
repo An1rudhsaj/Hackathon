@@ -17,7 +17,7 @@ AI-powered player-centric sports intelligence platform that transforms match eve
 > Watch the complete Sports Craft Engine experience below.
  
 <p align="center">
-  <video src="assets/demo.mp4" controls autoplay muted loop width="100%"></video>
+  <video src="demo.mp4" controls autoplay muted loop width="100%"></video>
 </p>
  
 > If GitHub does not render the video, click below:
@@ -25,7 +25,13 @@ AI-powered player-centric sports intelligence platform that transforms match eve
 📺 **Demo Video:** [Watch Demo](assets/demo.mp4)
  
 ---
+ ## 🏗️ Architecture
  
+<div align="center">
+ 
+sportscraft_engine_architecture_detailed (1).png
+ 
+</div>
 # 🚀 Overview
  
 Sports Craft Engine is a player-centric sports intelligence engine that automatically tracks every athlete throughout an entire match and transforms raw event data into meaningful stories.

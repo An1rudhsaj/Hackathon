@@ -1,13 +1,39 @@
 # ⚽ Sports Craft Engine - Real-Time Football Analytics Platform
-
+ 
 Sports Craft Engine is an advanced real-time football (soccer) match analysis platform that combines computer vision, AI, and interactive visualization to provide comprehensive match insights, live commentary, player tracking, and tactical analysis.
-
-![Sports Craft Engine](https://img.shields.io/badge/Status-Active-success)
-![Python](https://img.shields.io/badge/Python-3.8+-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-
+ 
+---
+ 
+## 🎥 Project Demo
+ 
+<div align="center">
+ 
+### Sports Craft Engine Demo
+ 
+<video src="./demo.mp4" controls autoplay muted loop width="900">
+  Your browser does not support the video tag.
+</video>
+ 
+</div>
+ 
+> 📹 If the video preview is not rendered by GitHub, download and watch:
+>
+> **[▶ View Demo Video](./demo.mp4)**
+ 
+---
+ 
+## 🏗️ Architecture
+ 
+<div align="center">
+ 
+<img src="./sportscraft_engine_architecture_detailed (1).png" alt="Sports Craft Engine Architecture" width="1000"/>
+ 
+</div>
+ 
+---
+ 
 ## 🌟 Features
+
 
 ### Core Analytics
 - **Real-time Player Tracking** - Track all players on the pitch with identity recognition
